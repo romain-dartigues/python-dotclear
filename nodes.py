@@ -24,7 +24,7 @@ class MazNode(object):
 	>>> body.child+= MazNode('strong')
 	>>> body.child+= MazNode('br')
 	>>> body.child+= MazNode('text')
-	>>> body.child&= MazNode('blockquote')
+	>>> body.child|= MazNode('blockquote')
 	>>> body|= MazNode('foot')
 	>>> body.next+= MazNode('text')
 	>>> print 'body (%d childs): %s' % (len(body), body)
