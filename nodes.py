@@ -49,7 +49,7 @@ class MazNode(object):
 		self.child  = attr.pop('child', None) # first child
 		self.next   = attr.pop('next', None) # next child
 		self.prev   = attr.pop('prev', None) # prev child
-		self.attr   = attributes
+		self.attr   = attributes.copy()
 		self.attr.update(attr)
 		if __debug__:
 			NoneType = None.__class__
