@@ -53,7 +53,7 @@ class MazNode(object):
 		self.attr.update(attr)
 	@staticmethod
 	def __add(a, b, mode):
-		'''Base function for addition'''
+		'''Base function for addition (add `b` as a child of `a`)'''
 		assert isinstance(a, MazNode) and isinstance(b, MazNode)
 		if mode == COPY:
 			a = copy.copy(a)
@@ -84,7 +84,7 @@ class MazNode(object):
 		return self.__add(self, other, mode=DEEPCOPY)
 	@staticmethod
 	def __or(a, b, mode):
-		'''Base function for bitwise or'''
+		'''Base function for bitwise or (add `b` as a brother of `a`)'''
 		assert isinstance(a, MazNode) and isinstance(b, MazNode)
 		if mode == COPY:
 			a = copy.copy(a)
@@ -98,9 +98,11 @@ class MazNode(object):
 				next = next
 			next.next = b
 			b.prev = next
+			b.parent = next.parent
 		else:
 			a.next = b
 			b.prev = a
+			b.parent = a.parent
 		return a
 	def __ior__(self, other):
 		'''Add `other` as a brother, in-place'''
