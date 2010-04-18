@@ -51,10 +51,19 @@ class MazNode(object):
 		self.prev   = attr.pop('prev', None) # prev child
 		self.attr   = attributes
 		self.attr.update(attr)
+		if __debug__:
+			NoneType = None.__class__
+			assert isinstance(self.parent, (NoneType, MazNode))
+			assert isinstance(self.child,  (NoneType, MazNode))
+			assert isinstance(self.prev,   (NoneType, MazNode))
+			assert isinstance(self.next,   (NoneType, MazNode))
+			assert isinstance(self.attr, dict)
+			assert isinstance(self.name, basestring)
 	@staticmethod
 	def __add(a, b, mode):
 		'''Base function for addition (add `b` as a child of `a`)'''
 		assert isinstance(a, MazNode) and isinstance(b, MazNode)
+		assert mode in (INPLACE, COPY, DEEPCOPY)
 		if mode == COPY:
 			a = copy.copy(a)
 			b = copy.copy(b)
@@ -86,6 +95,7 @@ class MazNode(object):
 	def __or(a, b, mode):
 		'''Base function for bitwise or (add `b` as a brother of `a`)'''
 		assert isinstance(a, MazNode) and isinstance(b, MazNode)
+		assert mode in (INPLACE, COPY, DEEPCOPY)
 		if mode == COPY:
 			a = copy.copy(a)
 			b = copy.copy(b)
@@ -116,16 +126,17 @@ class MazNode(object):
 		return self.__or(self, other, DEEPCOPY)
 	def __str__(self):
 		r = ['<', self.name]
-		# FIXME: don't rely on the slots
-		r+= [' %s=%r' %(attr, self.attr[attr]) for attr in self.attr if attr not in self.__slots__]
+		r+= [' %s=%r' %(attr, self.attr[attr]) for attr in self.attr]
 		if self.child:
-			r+= ['>'] + [str(child) for child in self] + ['</', self.name, '>']
+			l = len(self.child)
+			r+= ['>', '<!-- %u child%s --->' %(l, l>1 and 's' or ''), '</%s>' % self.name]
 		else:
 			r+= [' />']
 		return ''.join(r)
-	def __repr__(self): return repr(self.__str__())
+	def __repr__(self):
+		return repr(self.__str__())
 	def __len__(self):
-		'''Number of childs'''
+		'''Return the number of childs'''
 		c = 0
 		for child in self:
 			c+= 1
@@ -133,7 +144,8 @@ class MazNode(object):
 	@property
 	def children(self):
 		return [child for child in self]
-	def __nonzero__(self): return True
+	def __nonzero__(self):
+		return True
 	def __getitem__(self, key):
 		if isinstance(key, basestring):
 			return self.attr[key]
