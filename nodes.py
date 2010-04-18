@@ -12,6 +12,10 @@ INPLACE  = 0
 COPY     = 1
 DEEPCOPY = 2
 
+ENTER = 1
+LEAVE = 2
+SINGLETON = ENTER|LEAVE
+
 
 
 
@@ -38,7 +42,7 @@ class MazNode(object):
 	  : <blockquote />
 	'''
 	__slots__ = ('name', 'parent', 'child', 'prev', 'next', 'attr')
-	__serial__ = 2010, 4,16
+	__serial__ = 2010, 4,18
 	def __init__(self, name, attributes={}, **attr):
 		self.name   = name
 		self.parent = attr.pop('parent', None)
@@ -147,3 +151,51 @@ class MazNode(object):
 		while child:
 			yield child
 			child = child.next
+	def descend(self, node=None):
+		'''Iter through the tree, starting at ``node`` and yield a tuple
+
+		Parameter:
+		- `node`: starting node, default is `self`
+
+		Return a tuple of three elements:
+		#. a bitmask which might be :var:`ENTER`, :var:`LEAVE or
+		   :var:`SINGLETON` upon entering, leaving or entering and
+		   leaving (in the case of a singleton)
+		#. the current node
+		#. the depth from the root to the current node
+
+		.. Note::
+		   The iteration is not recursive, so you won't smash your
+		   stack.
+		'''
+		if not node:
+			node = self
+		root = node
+		curr = node
+		depth = 0
+		prev = None
+		while curr:
+			status = ENTER
+			if not curr.child:
+				status|= LEAVE
+			elif prev and (curr is root or curr.child is prev):
+				status = LEAVE
+			yield (status, curr, depth)
+			if curr is root:
+				if prev or not root.child:
+					break
+
+			if curr.child:
+				if curr.child is prev:
+					prev = curr
+				else:
+					depth+= 1
+					curr = curr.child
+					prev = curr
+					continue
+
+			if curr.next:
+				curr = curr.next
+			else:
+				depth-= 1
+				curr = curr.parent
