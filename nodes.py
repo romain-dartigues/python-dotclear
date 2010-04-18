@@ -38,14 +38,15 @@ class MazNode(object):
 	  : <blockquote />
 	'''
 	__slots__ = ('name', 'parent', 'child', 'prev', 'next', 'attr')
-	__serial__ = 2010, 4,14
-	def __init__(self, name, **attr):
+	__serial__ = 2010, 4,16
+	def __init__(self, name, attributes={}, **attr):
 		self.name   = name
 		self.parent = attr.pop('parent', None)
 		self.child  = attr.pop('child', None) # first child
 		self.next   = attr.pop('next', None) # next child
 		self.prev   = attr.pop('prev', None) # prev child
-		self.attr   = attr
+		self.attr   = attributes
+		self.attr.update(attr)
 	@staticmethod
 	def __add(a, b, mode):
 		'''Base function for addition'''
