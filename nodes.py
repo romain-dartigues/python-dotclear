@@ -42,7 +42,7 @@ class MazNode(object):
 	  : <blockquote />
 	'''
 	__slots__ = ('name', 'parent', 'child', 'prev', 'next', 'attr')
-	__serial__ = 2010, 4,18
+	__serial__ = 2010, 4,19
 
 	def __init__(self, name, attributes={}, **attr):
 		self.name   = name
@@ -59,7 +59,9 @@ class MazNode(object):
 			assert isinstance(self.prev,   (NoneType, MazNode))
 			assert isinstance(self.next,   (NoneType, MazNode))
 			assert isinstance(self.attr, dict)
-			assert isinstance(self.name, basestring)
+			assert isinstance(self.name,   (NoneType, basestring))
+			if name is None and not self.attr.get('value', None):
+				raise AssertionError
 
 	@staticmethod
 	def __add(a, b, mode):
@@ -80,6 +82,7 @@ class MazNode(object):
 			b.prev = child
 			b.parent = a
 		else:
+			assert a.name, 'nameless nodes should not have children'
 			a.child = b
 			b.parent = a
 		return a
@@ -137,13 +140,18 @@ class MazNode(object):
 		return self.__or(self, other, DEEPCOPY)
 
 	def __str__(self):
+		if not self.name:
+			assert self.attr.get('value', False)
+			return self.attr['value']
+		l = len(self)
 		r = ['<', self.name]
 		r+= [' %s=%r' %(attr, self.attr[attr]) for attr in self.attr]
-		if self.child:
-			l = len(self.child)
-			r+= ['>', '<!-- %u child%s --->' %(l, l>1 and 's' or ''), '</%s>' % self.name]
-		else:
+		if l < 1:
 			r+= [' />']
+		elif l < 2:
+			r+= ['>', str(self.child), '</%s>' % self.name]
+		else:
+			r+= ['>', '<!-- %u child%s --->' %(l, l>1 and 's' or ''), '</%s>' % self.name]
 		return ''.join(r)
 
 	def __repr__(self):
