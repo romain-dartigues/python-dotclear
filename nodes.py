@@ -43,6 +43,7 @@ class MazNode(object):
 	'''
 	__slots__ = ('name', 'parent', 'child', 'prev', 'next', 'attr')
 	__serial__ = 2010, 4,18
+
 	def __init__(self, name, attributes={}, **attr):
 		self.name   = name
 		self.parent = attr.pop('parent', None)
@@ -59,6 +60,7 @@ class MazNode(object):
 			assert isinstance(self.next,   (NoneType, MazNode))
 			assert isinstance(self.attr, dict)
 			assert isinstance(self.name, basestring)
+
 	@staticmethod
 	def __add(a, b, mode):
 		'''Base function for addition (add `b` as a child of `a`)'''
@@ -81,16 +83,21 @@ class MazNode(object):
 			a.child = b
 			b.parent = a
 		return a
+
 	def __iadd__(self, other):
 		'''Add `other` as a child, in-place'''
 		return self.__add(self, other, mode=INPLACE)
+
 	def __ladd__(self, other):
 		return self.__add(self, other, mode=DEEPCOPY)
+
 	def __radd__(self, other):
 		return self.__add(other, self, mode=DEEPCOPY)
+
 	def __add__(self, other):
 		'''Add `other` as a child and return a new object (deepcopy of self and other)'''
 		return self.__add(self, other, mode=DEEPCOPY)
+
 	@staticmethod
 	def __or(a, b, mode):
 		'''Base function for bitwise or (add `b` as a brother of `a`)'''
@@ -114,16 +121,21 @@ class MazNode(object):
 			b.prev = a
 			b.parent = a.parent
 		return a
+
 	def __ior__(self, other):
 		'''Add `other` as a brother, in-place'''
 		return self.__or(self, other, INPLACE)
+
 	def __lor__(self, other):
 		return self.__or(self, other, DEEPCOPY)
+
 	def __ror__(self, other):
 		return self.__or(other, self, DEEPCOPY)
+
 	def __or__(self, other):
 		'''Add `other` as a brother and return a new object (deepcopy of self and other)'''
 		return self.__or(self, other, DEEPCOPY)
+
 	def __str__(self):
 		r = ['<', self.name]
 		r+= [' %s=%r' %(attr, self.attr[attr]) for attr in self.attr]
@@ -133,19 +145,24 @@ class MazNode(object):
 		else:
 			r+= [' />']
 		return ''.join(r)
+
 	def __repr__(self):
 		return repr(self.__str__())
+
 	def __len__(self):
 		'''Return the number of childs'''
 		c = 0
 		for child in self:
 			c+= 1
 		return c
+
 	@property
 	def children(self):
 		return [child for child in self]
+
 	def __nonzero__(self):
 		return True
+
 	def __getitem__(self, key):
 		if isinstance(key, basestring):
 			return self.attr[key]
@@ -159,12 +176,14 @@ class MazNode(object):
 				c+= 1
 			raise IndexError
 		raise TypeError
+
 	def __iter__(self):
 		'''Iter through childs'''
 		child = self.child
 		while child:
 			yield child
 			child = child.next
+
 	def descend(self, node=None):
 		'''Iter through the tree, starting at ``node`` and yield a tuple
 
