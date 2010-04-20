@@ -14,7 +14,7 @@ DEEPCOPY = 2
 
 ENTER = 1
 LEAVE = 2
-SINGLETON = ENTER|LEAVE
+EMPTY = ENTER|LEAVE
 
 
 
@@ -37,21 +37,19 @@ class MazNode(object):
 
 	def __init__(self, name='', attributes={}, **attr):
 		self.name   = name
-		self.parent = attr.pop('parent', None)
+		self.parent = attr.pop('parent', self)
 		self.child  = attr.pop('child', None) # first child
-		self.next   = attr.pop('next', None) # next child
-		self.prev   = attr.pop('prev', None) # prev child
+		self.next   = attr.pop('next', self) # next child
+		self.prev   = attr.pop('prev', self) # prev child
 		self.attr   = attributes.copy()
 		self.attr.update(attr)
-		if __debug__:
-			NoneType = None.__class__
-			assert isinstance(self.parent, (NoneType, MazNode))
-			assert isinstance(self.child,  (NoneType, MazNode))
-			assert isinstance(self.prev,   (NoneType, MazNode))
-			assert isinstance(self.next,   (NoneType, MazNode))
-			assert isinstance(self.attr, dict)
-			assert isinstance(self.name,   basestring)
-			assert bool(self.name) | bool(self.attr.get('value'))
+		assert isinstance(self.parent, MazNode)
+		assert isinstance(self.child,  (None.__class__, MazNode))
+		assert isinstance(self.prev,   MazNode)
+		assert isinstance(self.next,   MazNode)
+		assert isinstance(self.attr,   dict)
+		assert isinstance(self.name,   basestring)
+		assert bool(self.name) | bool(self.attr.get('value'))
 
 	@staticmethod
 	def __add(a, b, mode):
@@ -64,17 +62,12 @@ class MazNode(object):
 		elif mode == DEEPCOPY:
 			a = copy.deepcopy(a)
 			b = copy.deepcopy(b)
+		assert a.name, 'nameless nodes should not have children'
+		b.parent = a
 		if a.child:
-			child = a.child
-			while child.next:
-				child = child.next
-			child.next = b
-			b.prev = child
-			b.parent = a
+			MazNode.__or(a.child, b, INPLACE)
 		else:
-			assert a.name, 'nameless nodes should not have children'
 			a.child = b
-			b.parent = a
 		return a
 
 	def __iadd__(self, other):
@@ -102,17 +95,11 @@ class MazNode(object):
 		elif mode == DEEPCOPY:
 			a = copy.deepcopy(a)
 			b = copy.deepcopy(b)
-		if a.next:
-			next = a.next
-			while next.next:
-				next = next
-			next.next = b
-			b.prev = next
-			b.parent = next.parent
-		else:
-			a.next = b
-			b.prev = a
-			b.parent = a.parent
+		b.prev = a.prev
+		b.next = a
+		b.parent = a.parent
+		a.prev.next = b
+		a.prev = b
 		return a
 
 	def __ior__(self, other):
@@ -181,6 +168,8 @@ class MazNode(object):
 		while child:
 			yield child
 			child = child.next
+			if child.parent.child is child:
+				break
 
 	def descend(self, node=None):
 		'''Iter through the tree, starting at ``node`` and yield a tuple
@@ -189,9 +178,9 @@ class MazNode(object):
 		- `node`: starting node, default is `self`
 
 		Return a tuple of three elements:
-		#. a bitmask which might be :var:`ENTER`, :var:`LEAVE or
-		   :var:`SINGLETON` upon entering, leaving or entering and
-		   leaving (in the case of a singleton)
+		#. a bitmask which might be :var:`ENTER`, :var:`LEAVE` or
+		   :var:`EMPTY` upon entering, leaving or entering and
+		   leaving at once (in the case of an empty element)
 		#. the current node
 		#. the depth from the root to the current node
 
@@ -202,31 +191,27 @@ class MazNode(object):
 		if not node:
 			node = self
 		root = node
-		curr = node
+		curr = root
 		depth = 0
-		prev = None
-		while curr:
-			status = ENTER
-			if not curr.child:
-				status|= LEAVE
-			elif prev and (curr is root or curr.child is prev):
-				status = LEAVE
-			yield (status, curr, depth)
-			if curr is root:
-				if prev or not root.child:
-					break
-
+		while 1:
+			yield (curr.child and ENTER or EMPTY, curr, depth)
 			if curr.child:
-				if curr.child is prev:
-					prev = curr
-				else:
-					depth+= 1
-					curr = curr.child
-					prev = curr
-					continue
-
-			if curr.next:
-				curr = curr.next
-			else:
+				curr = curr.child
+				depth+= 1
+				continue
+			if curr.child:
+				yield (LEAVE, curr, depth)
+			if curr is root:
+				break
+			curr = curr.next
+			if curr is not curr.parent.child:
+				continue
+			curr = curr.parent.next
+			depth-= 1
+			yield (LEAVE, curr.prev, depth)
+			while curr is curr.parent.child:
 				depth-= 1
-				curr = curr.parent
+				curr = curr.parent.next
+				yield (LEAVE, curr.prev, depth)
+			if curr is root.next:
+				break
