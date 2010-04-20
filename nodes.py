@@ -31,15 +31,6 @@ class MazNode(object):
 	>>> body.child|= MazNode('blockquote')
 	>>> body|= MazNode('foot')
 	>>> body.next+= MazNode('text')
-	>>> print 'body (%d childs): %s' % (len(body), body)
-	body (2 childs): <body><p><strong /><br /><text /></p><blockquote /></body>
-	>>> print 'body[1]: %s' %(body[1],)
-	body[1]: <p><strong /><br /><text /></p>
-	>>> for child in body:
-	...         print '  : %s' %(child,)
-	... 
-	  : <p><strong /><br /><text /></p>
-	  : <blockquote />
 	'''
 	__slots__ = ('name', 'parent', 'child', 'prev', 'next', 'attr')
 	__serial__ = 2010, 4,21
@@ -148,10 +139,10 @@ class MazNode(object):
 		if l < 1:
 			r+= [' />']
 		elif l < 2:
-			r+= ['>', str(self.child), '</%s>' % self.name]
+			r+= ['>', unicode(self.child), '</%s>' % self.name]
 		else:
 			r+= ['>', '<!-- %u child%s --->' %(l, l>1 and 's' or ''), '</%s>' % self.name]
-		return ''.join(r)
+		return unicode(''.join(r))
 
 	def __repr__(self):
 		return repr(self.__str__())
