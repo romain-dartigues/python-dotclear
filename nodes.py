@@ -42,9 +42,9 @@ class MazNode(object):
 	  : <blockquote />
 	'''
 	__slots__ = ('name', 'parent', 'child', 'prev', 'next', 'attr')
-	__serial__ = 2010, 4,19
+	__serial__ = 2010, 4,21
 
-	def __init__(self, name, attributes={}, **attr):
+	def __init__(self, name='', attributes={}, **attr):
 		self.name   = name
 		self.parent = attr.pop('parent', None)
 		self.child  = attr.pop('child', None) # first child
@@ -59,9 +59,8 @@ class MazNode(object):
 			assert isinstance(self.prev,   (NoneType, MazNode))
 			assert isinstance(self.next,   (NoneType, MazNode))
 			assert isinstance(self.attr, dict)
-			assert isinstance(self.name,   (NoneType, basestring))
-			if name is None and not self.attr.get('value', None):
-				raise AssertionError
+			assert isinstance(self.name,   basestring)
+			assert bool(self.name) | bool(self.attr.get('value'))
 
 	@staticmethod
 	def __add(a, b, mode):
