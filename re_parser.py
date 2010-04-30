@@ -92,8 +92,16 @@ class Translator(object):
 	Unimplemented methods will call :meth:`Translator.warn` and return the
 	input untouched.
 	'''
-	def run(self, data):
-		'''Run the parser on data and return the result'''
+	def run(self, data, skip_blocks=False):
+		'''Run the parser on `data` and return the result
+
+		Parameters:
+		- `data`: input string
+		- `skip_blocks`: skip the block elements parsing to the inlines
+		  if set to ``True`` (mainly for testing purposes)
+		'''
+		if skip_blocks:
+			return p_inline.sub(self.inlines, data)
 		return p_block.sub(self.blocks, data)
 
 	def blocks(self, match):
