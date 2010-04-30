@@ -18,7 +18,7 @@ __all__ = (
 
 
 
-import re
+import sre_compile
 import itertools
 
 
@@ -51,6 +51,27 @@ class Wiki2XHTML(Translator):
 	   Behaviour is quite different than the original DotClear parser and a
 	   few elements has been left unimplemented.
 	'''
+	#? first space of each line
+	_first_space = sre_compile.compile(r'(?:^|(?<=\n))(?:[ ]|(?=\n))')
+
+	#? first '> ' sequence of each line, the space being optional
+	_first_gt_space = sre_compile.compile(r'(?:^|(?<=\n))>(?:[ ]|(?=\n))')
+
+	#? double or more LF
+	_block_separator = sre_compile.compile(r'\n\n+(?=\S)')
+
+	#? separate list prefix (# | *) and list value
+	_fragment_list = sre_compile.compile(
+		r'(?P<type>[*#]+) \s* (?P<value> (?: (?:(?:.|\n)+?) (?:(?=\n[#*])|$) ) | (?:.+\n)$ )',
+		sre_compile.SRE_FLAG_MULTILINE|sre_compile.SRE_FLAG_VERBOSE
+	)
+
+	#? use to beautify ``<li>\n\s*value`` to ``<li>value``
+	_li_trim = sre_compile.compile(r'(?<=<li>)\s+|(?<![>])(?=\n)\s+?(?=</li>)')
+
+	#? non-word
+	_non_word = sre_compile.compile(r'\W+')
+
 	def escape(self, string):
 		# TODO: bench ``string.translate(html_special_chars)`` against the following and pickup the best (translate seems better for large translation table)
 		return u''.join(html_entities.get(c, c) for c in string)
@@ -68,7 +89,7 @@ class Wiki2XHTML(Translator):
 	def b_pre(self, match):
 		return '<pre>%s</pre>\n' % p_inline.sub(
 			self.inlines,
-			re.sub(r'(?:^|(?<=\n))(?:[ ]|(?=\n))', '', match.group(match.lastgroup))
+			self._remove_first_space.sub('', match.group(match.lastgroup))
 		).rstrip()
 
 	def b_special(self, match):
@@ -83,11 +104,10 @@ class Wiki2XHTML(Translator):
 
 	def b_blockquote(self, match):
 		return '<blockquote><p>%s</p></blockquote>\n' % '</p>\n<p>'.join(
-				re.split(r'\n\n+(?=\S)',
+				self._block_separator.split(
 					p_inline.sub(
 						self.inlines,
-						re.sub(
-							r'(?:^|(?<=\n))>(?:[ ]|(?=\n))',
+						self._first_gt_space.sub(
 							'',
 							match.group(match.lastgroup)
 						)
@@ -99,7 +119,7 @@ class Wiki2XHTML(Translator):
 		ltprev = ''
 		#? TODO: i'd like to do it without the nodes tree
 		root = node = MazNode('div')
-		for m in re.finditer(r'(?P<type>[*#]+) \s* (?P<value> (?: (?:(?:.|\n)+?) (?:(?=\n[#*])|$) ) | (?:.+\n)$ )', match.group(), re.X|re.M):
+		for m in self._fragment_list.finditer(match.group()):
 			ltcurr, value = m.groups()
 			for prev, curr in itertools.dropwhile(lambda x: not cmp(x[0], x[1]), itertools.izip_longest(ltprev, ltcurr)):
 				if prev:
@@ -115,7 +135,7 @@ class Wiki2XHTML(Translator):
 			ltprev = ltcurr
 		# FIXME: there is a bug in MazNode when descending from a higher level than the root
 		root.child.parent = root.child
-		return re.sub(r'(?<=<li>)\s+|(?<![>])(?=\n)\s+?(?=</li>)', '', node2html(root.child))
+		return self._li_trim.sub('', node2html(root.child))
 
 	def b_nl(self, match):
 		return ''
@@ -140,7 +160,7 @@ class Wiki2XHTML(Translator):
 		return '<br />'
 
 	def i_anchor(self, match):
-		return '<a name="%s" /></a>' % re.sub('\W+', '-', match.group('anchor'))
+		return '<a name="%s" /></a>' % self._non_word.sub('-', match.group('anchor'))
 
 	def i_acronym(self, match):
 		return '<acronym%s>%s</acronym>' % (
