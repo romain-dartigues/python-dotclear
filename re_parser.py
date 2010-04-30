@@ -11,14 +11,14 @@ __all__ = (
 
 
 
-import re
+import sre_compile
 import sys
 
 
 
 
 
-RULES_FLAGS = re.MULTILINE | re.VERBOSE | re.UNICODE
+RULES_FLAGS = sre_compile.SRE_FLAG_MULTILINE | sre_compile.SRE_FLAG_VERBOSE | sre_compile.SRE_FLAG_UNICODE
 
 RULES_BLOCK = (
 	#? xmp and macro-block raw-html
@@ -39,7 +39,7 @@ RULES_BLOCK = (
 	r'(?P<nl>^\s*$ )',
 )
 
-p_block = re.compile('|'.join(RULES_BLOCK), RULES_FLAGS)
+p_block = sre_compile.compile('|'.join(RULES_BLOCK), RULES_FLAGS)
 
 RULES_INLINE = (
 	#? URLs (starting with an url scheme like HTTP)
@@ -77,7 +77,7 @@ RULES_INLINE = (
 	r'(?: (?<!\s|\\)\$\$(?P<footnote>  (?: (?<![^\\](?=\$\$)) .)+  ) \$\$)',
 )
 
-p_inline = re.compile(r'(?<!\\)(?:%s)' % ('|'.join(RULES_INLINE),), RULES_FLAGS)
+p_inline = sre_compile.compile(r'(?<!\\)(?:%s)' % ('|'.join(RULES_INLINE),), RULES_FLAGS)
 
 
 
