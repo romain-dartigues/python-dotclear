@@ -97,7 +97,15 @@ class Translator(object):
 		return p_block.sub(self.blocks, data)
 
 	def blocks(self, match):
-		'''Parse blocks, probably inlines and return the result'''
+		'''Called for blocks replacement during the regexp substitution
+
+		Call self."``b_`` + tag name" with `match` as parameter if the
+		method has been defined in the subclass; otherwise call
+		:meth:`self.warn` and return the untoutched input.
+
+		.. Note::
+		   It is only used when writing a translator.
+		'''
 		try:
 			return getattr(self, 'b_%s' % match.lastgroup)(match)
 		except AttributeError, err:
@@ -105,9 +113,15 @@ class Translator(object):
 		return match.group()
 
 	def inlines(self, match):
-		'''Parse inlines, and return the result
-		
-		Call :meth:`self.warn` and return the untouched input if the the tag is not hooked in the subclass'''
+		'''Called for inlines replacement during the regexp substitution
+
+		Call self."``_i`` + tag name" with `match` as parameter if the
+		method has been defined in the subclass; otherwise call
+		:meth:`self.warn` and return the untouched input.
+
+		.. Note::
+		   It is only used when writing a translator.
+		'''
 		try:
 			return getattr(self, 'i_%s' % match.lastgroup)(match)
 		except AttributeError, err:
@@ -116,4 +130,11 @@ class Translator(object):
 
 	def warn(self, match, message):
 		if __debug__:
-			sys.stderr.write('warning: [%s](%d, %d): %s\n' % (match.lastgroup, match.start(), match.end(), message))
+			sys.stderr.write(
+				'warning: [%s](%d, %d): %s\n' % (
+					match.lastgroup,
+					match.start(),
+					match.end(),
+					message
+				)
+			)
