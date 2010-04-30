@@ -24,7 +24,7 @@ RULES_BLOCK = (
 	#? xmp and macro-block raw-html
 	r'(?:^\s*///\s*(?P<macro>html)?\s*(?(macro)(?P<special>(?:(?!///$)(?:.|\n))*)|(?P<xmp>(?:(?!///$)(?:.|\n))*))(?:///))',
 	#? pre
-	r'(?P<pre> (?<=\n\n)   (?:^[ ].+\n)+ )',
+	r'(?P<pre> (?:(?<=\n\n)|^)   (?:^[ ].+(\n|$))+ )',
 	#? list, ordered and unordered Matches them whole, separate items are parsed later. The list *must* start with a single bullet.
 	r'(?P<list>^[ \t]*([*][^*\#]|[\#][^\#*]).*$(\n[ \t]*[*\#]+.*$)*)',
 	#? head
