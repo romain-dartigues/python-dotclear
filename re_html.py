@@ -160,7 +160,7 @@ class Wiki2XHTML(Translator):
 		return '<br />'
 
 	def i_anchor(self, match):
-		return '<a name="%s" /></a>' % self._non_word.sub('-', match.group('anchor'))
+		return '<a name="%s"></a>' % self._non_word.sub('-', match.group('anchor'))
 
 	def i_acronym(self, match):
 		return '<acronym%s>%s</acronym>' % (
