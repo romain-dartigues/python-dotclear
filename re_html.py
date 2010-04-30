@@ -73,8 +73,7 @@ class Wiki2XHTML(Translator):
 	_non_word = sre_compile.compile(r'\W+')
 
 	def escape(self, string):
-		# TODO: bench ``string.translate(html_special_chars)`` against the following and pickup the best (translate seems better for large translation table)
-		return u''.join(html_entities.get(c, c) for c in string)
+		return u''.join(c in html_entities and html_entities[c] or c for c in string)
 
 	##### blocks
 	def b_hr(self, match):
