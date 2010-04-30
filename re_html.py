@@ -20,6 +20,7 @@ __all__ = (
 
 import sre_compile
 import itertools
+import urlparse
 
 
 from nodes import MazNode, ENTER, LEAVE, EMPTY
@@ -43,7 +44,6 @@ html_entities = html_special_chars
 
 # FIXME: unescape chars before the output
 # XXX: should we use :func:`urllib.quote` on href/src?
-# TODO: use urlparse.urlsplit(match.group('a_href')).hostname and check if the link is external or not
 class Wiki2XHTML(Translator):
 	'''Simple conversion from DotClear wiki2xhtml markup to HTML
 
@@ -169,12 +169,15 @@ class Wiki2XHTML(Translator):
 		)
 
 	def i_a(self, match):
+		href = urlparse.urlsplit(match.group('a_href'))
 		link = ['<a href="%s"' % match.group('a_href')]
 		if match.group('a_title'):
 			link.append(' title="%s"' % self.escape(match.group('a_title')))
 		if match.group('a_lang'):
 			link.append(' hreflang="%s"' % self.escape(match.group('a_lang')))
-		link.append(' class="external"')
+		if href.scheme:
+			# TODO: make a handle for the external using the hostname
+			link.append(' class="external"')
 		link.append('>%s</a>' % (
 			p_inline.sub(self.inlines, match.group('a_value')) \
 			if match.group('a_value') \
