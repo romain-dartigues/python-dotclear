@@ -99,7 +99,7 @@ class Wiki2XHTML(Translator):
 		ltprev = ''
 		#? TODO: i'd like to do it without the nodes tree
 		root = node = MazNode('div')
-		for m in re.finditer(r'(?P<type>[*#]+) \s* (?P<value> (?: (?:(?:.|\n)+?) (?=\n[#*]) ) | (?:.+\n)$ )', match.group(), re.X|re.M):
+		for m in re.finditer(r'(?P<type>[*#]+) \s* (?P<value> (?: (?:(?:.|\n)+?) (?:(?=\n[#*])|$) ) | (?:.+\n)$ )', match.group(), re.X|re.M):
 			ltcurr, value = m.groups()
 			for prev, curr in itertools.dropwhile(lambda x: not cmp(x[0], x[1]), itertools.izip_longest(ltprev, ltcurr)):
 				if prev:
