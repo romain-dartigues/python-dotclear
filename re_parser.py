@@ -54,9 +54,9 @@ RULES_INLINE = (
 	#? escaped character
 	r'(?P<escape>[\\] (?P<escaped_char>\S) )',
 	#? emphasis
-	r"(?:'' (?P<em>.+) (?<![\\])'')",
+	r"(?:'' (?P<em>.+?) (?<![\\])'')",
 	#? stronger emphasis
-	r'(?:__ (?P<strong>.+) (?<!\\)__)',
+	r'(?:__ (?P<strong>.+?) (?<!\\)__)',
 	#? line break
 	r'(?P<br>%%%)',
 	#? anchor
@@ -72,7 +72,7 @@ RULES_INLINE = (
 	#? insert
 	r'(?: \+\+ (?P<ins>.+?) (?<![\\]) \+\+ )',
 	#? delete
-	r'(?: -- (?P<del>.+) (?<![\\]) -- )',
+	r'(?: -- (?P<del>.+?) (?<![\\]) -- )',
 	#? foot note
 	r'(?: (?<!\s|\\)\$\$(?P<footnote>  (?: (?<![^\\](?=\$\$)) .)+  ) \$\$)',
 )
