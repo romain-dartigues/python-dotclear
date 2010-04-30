@@ -89,7 +89,7 @@ class Wiki2XHTML(Translator):
 	def b_pre(self, match):
 		return '<pre>%s</pre>\n' % p_inline.sub(
 			self.inlines,
-			self._remove_first_space.sub('', match.group(match.lastgroup))
+			self._first_space.sub('', match.group(match.lastgroup))
 		).rstrip()
 
 	def b_special(self, match):
