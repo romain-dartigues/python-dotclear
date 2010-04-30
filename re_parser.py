@@ -32,7 +32,7 @@ RULES_BLOCK = (
 	#? hr separator
 	r'(?P<hr>^\s*----\s*$)',
 	#? citation
-	r'^(?P<blockquote>>(.*) ([\#]!(\s+.*)?$)?(.|\n)+?)^[^>]',
+	r'^(?P<blockquote>>(.*) ([\#]!(\s+.*)?$)?(.|\n)+?)(?:^[^>]|^$)',
 	#? paragraph
 	r'(?:(?<=(\n\n)(?![/*#!]|----))|^) (?P<p> ^(?:(?:.+\n(?!\n))*(?:.+$)) \n?)',
 	#? empty line
