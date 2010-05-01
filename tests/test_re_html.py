@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 # vim:ts=8 sw=8 ai noet encoding=utf-8
 import os
-import re
-import unittest
 import sys
+import unittest
 
 sys.dont_write_bytecode = True
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
@@ -24,6 +23,7 @@ class TestWiki2XHTML(unittest.TestCase):
 			self.w2x.run(raw, skip_blocks=skip_blocks),
 			html
 		)
+
 
 
 class TestSimpleBlocks(TestWiki2XHTML):
@@ -112,8 +112,8 @@ class TestSimpleInlines(TestWiki2XHTML):
 
 	def test_br(self):
 		self._test(
-			'Première ligne%%%\nDeuxième ligne',
-			'Première ligne<br />\nDeuxième ligne'
+			u'Première ligne%%%\nDeuxième ligne',
+			u'Première ligne<br />\nDeuxième ligne'
 		)
 
 	def test_a(self):
