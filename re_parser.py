@@ -114,10 +114,10 @@ class Translator(object):
 		.. Note::
 		   It is only used when writing a translator.
 		'''
-		try:
-			return getattr(self, 'b_%s' % match.lastgroup)(match)
-		except AttributeError, err:
-			self.warn(match, 'missing block handler')
+		target = 'b_%s' % match.lastgroup
+		if hasattr(self, target):
+			return getattr(self, target)(match)
+		self.warn(match, 'missing block handler: %s.%s()' % (self.__class__.__name__, target))
 		return match.group()
 
 	def inlines(self, match):
@@ -130,10 +130,10 @@ class Translator(object):
 		.. Note::
 		   It is only used when writing a translator.
 		'''
-		try:
-			return getattr(self, 'i_%s' % match.lastgroup)(match)
-		except AttributeError, err:
-			self.warn(match, 'missing inline handler; %r' % (err,))
+		target = 'i_%s' % match.lastgroup
+		if hasattr(self, target):
+			return getattr(self, target)(match)
+		self.warn(match, 'missing inline handler: %s.%s()' % (self.__class__.__name__, target))
 		return match.group()
 
 	def warn(self, match, message):
