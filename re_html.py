@@ -37,8 +37,7 @@ html_special_chars = {
 	u'<': u'&lt;',
 	u'>': u'&gt;',
 }
-#html_entities = dict((v,'&%s;'%k) for k, v in __import__('htmlentitydefs').entitydefs.iteritems())
-html_entities = html_special_chars
+html_entities = dict((v.decode('latin1'), '&%s;'%k) for k, v in __import__('htmlentitydefs').entitydefs.iteritems() if len(v) == 1)
 
 
 
@@ -72,8 +71,16 @@ class Wiki2XHTML(Translator):
 	#? non-word
 	_non_word = sre_compile.compile(r'\W+')
 
-	def escape(self, string):
-		return u''.join(c in html_entities and html_entities[c] or c for c in string)
+	def escape(self, string, entities=False):
+		'''Escape special HTML characters
+
+		Replace characters with a special signifiance in HTML by their
+		HTML entity equivalent.
+		If the optional argument `entities` is set, will use an
+		entities table build from :var:`htmlentitydefs.entitydefs`.
+		'''
+		tr = html_entities if entities else html_special_chars
+		return u''.join(c in tr and tr[c] or c for c in string)
 
 	##### blocks
 	def b_hr(self, match):
