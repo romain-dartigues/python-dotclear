@@ -7,7 +7,7 @@ Usage::
 	<p>Hello World.</p>
 
 """
-__serial__    = 2010, 4,30
+__serial__    = 2010, 5, 1
 __author__    = 'Romain Dartigues <romain.dartigues@gmail.com>'
 __docformat__ = 'restructuredtext'
 __all__ = (
@@ -77,32 +77,32 @@ class Wiki2XHTML(Translator):
 
 	##### blocks
 	def b_hr(self, match):
-		return '<hr />\n'
+		return u'<hr />\n'
 
 	def b_p(self, match):
-		return '<p>%s</p>\n' % p_inline.sub(self.inlines, match.group('p')).strip()
+		return u'<p>%s</p>\n' % p_inline.sub(self.inlines, match.group('p')).strip()
 
 	def b_xmp(self, match):
-		return '<pre class="xmp">%s</pre>\n' % self.escape(match.group('xmp')).strip()
+		return u'<pre class="xmp">%s</pre>\n' % self.escape(match.group('xmp')).strip()
 
 	def b_pre(self, match):
-		return '<pre>%s</pre>\n' % p_inline.sub(
+		return u'<pre>%s</pre>\n' % p_inline.sub(
 			self.inlines,
 			self._first_space.sub('', match.group(match.lastgroup))
 		).rstrip()
 
 	def b_special(self, match):
 		assert match.group('macro') == 'html'
-		return '<div class="macro %s">%s</div>\n' % (self.escape(match.group('macro')), match.group('special').strip())
+		return u'<div class="macro %s">%s</div>\n' % (self.escape(match.group('macro')), match.group('special').strip())
 
 	def b_head(self, match):
-		return '<h%(n)u>%(value)s</h%(n)u>\n' % {
+		return u'<h%(n)u>%(value)s</h%(n)u>\n' % {
 			'n': 6-len(match.group('head_level')),
 			'value': p_inline.sub(self.inlines, match.group('head_value'))
 		}
 
 	def b_blockquote(self, match):
-		return '<blockquote><p>%s</p></blockquote>\n' % '</p>\n<p>'.join(
+		return u'<blockquote><p>%s</p></blockquote>\n' % u'</p>\n<p>'.join(
 				self._block_separator.split(
 					p_inline.sub(
 						self.inlines,
@@ -141,43 +141,43 @@ class Wiki2XHTML(Translator):
 
 	##### inlines
 	def i_code(self, match):
-		return '<tt class="code">%s</tt>' % p_inline.sub(self.inlines, match.group(match.lastgroup))
+		return u'<tt class="code">%s</tt>' % p_inline.sub(self.inlines, match.group(match.lastgroup))
 
 	def i_em(self, match):
-		return '<em>%s</em>' % p_inline.sub(self.inlines, match.group(match.lastgroup))
+		return u'<em>%s</em>' % p_inline.sub(self.inlines, match.group(match.lastgroup))
 
 	def i_strong(self, match):
-		return '<strong>%s</strong>' % p_inline.sub(self.inlines, match.group(match.lastgroup))
+		return u'<strong>%s</strong>' % p_inline.sub(self.inlines, match.group(match.lastgroup))
 
 	def i_del(self, match):
-		return '<del>%s</del>' % p_inline.sub(self.inlines, match.group(match.lastgroup))
+		return u'<del>%s</del>' % p_inline.sub(self.inlines, match.group(match.lastgroup))
 
 	def i_ins(self, match):
-		return '<ins>%s</ins>' % p_inline.sub(self.inlines, match.group(match.lastgroup))
+		return u'<ins>%s</ins>' % p_inline.sub(self.inlines, match.group(match.lastgroup))
 
 	def i_br(self, match):
-		return '<br />'
+		return u'<br />'
 
 	def i_anchor(self, match):
-		return '<a name="%s"></a>' % self._non_word.sub('-', match.group('anchor'))
+		return u'<a name="%s"></a>' % self._non_word.sub('-', match.group('anchor'))
 
 	def i_acronym(self, match):
-		return '<acronym%s>%s</acronym>' % (
-			' title="%s"' % self.escape(match.group('acronym_title').strip()) if match.group('acronym_title') else '',
+		return u'<acronym%s>%s</acronym>' % (
+			u' title="%s"' % self.escape(match.group('acronym_title').strip()) if match.group('acronym_title') else '',
 			p_inline.sub(self.inlines, match.group('acronym_value')).strip()
 		)
 
 	def i_a(self, match):
 		href = urlparse.urlsplit(match.group('a_href'))
-		link = ['<a href="%s"' % match.group('a_href')]
+		link = [u'<a href="%s"' % match.group('a_href')]
 		if match.group('a_title'):
-			link.append(' title="%s"' % self.escape(match.group('a_title')))
+			link.append(u' title="%s"' % self.escape(match.group('a_title')))
 		if match.group('a_lang'):
-			link.append(' hreflang="%s"' % self.escape(match.group('a_lang')))
+			link.append(u' hreflang="%s"' % self.escape(match.group('a_lang')))
 		if href.scheme:
 			# TODO: make a handle for the external using the hostname
-			link.append(' class="external"')
-		link.append('>%s</a>' % (
+			link.append(u' class="external"')
+		link.append(u'>%s</a>' % (
 			p_inline.sub(self.inlines, match.group('a_value')) \
 			if match.group('a_value') \
 			else self.escape(match.group('a_href'))
@@ -185,7 +185,7 @@ class Wiki2XHTML(Translator):
 		return ''.join(link)
 
 	def i_uri(self, match):
-		return '<a href="%s" class="external">%s</a>' % (
+		return u'<a href="%s" class="external">%s</a>' % (
 			match.group(match.lastgroup),
 			self.escape(match.group(match.lastgroup))
 		)
@@ -215,11 +215,11 @@ class Wiki2XHTML(Translator):
 	def i_cite(self, match):
 		r = ['<q']
 		if match.group('cite_lang'):
-			r.append(' lang="%s"' % self.escape(match.group('cite_lang')))
+			r.append(u' lang="%s"' % self.escape(match.group('cite_lang')))
 		if match.group('cite_cite'):
-			# FIXME: use urlencode, not escape
-			r.append(' cite="%s"' % self.escape(match.group('cite_cite')))
-		r.append('>%s</q>' % p_inline.sub(self.inlines, match.group('cite_value')).strip())
+			# FIXME? use urlencode, not escape
+			r.append(u' cite="%s"' % self.escape(match.group('cite_cite')))
+		r.append(u'>%s</q>' % p_inline.sub(self.inlines, match.group('cite_value')).strip())
 		return ''.join(r)
 
 

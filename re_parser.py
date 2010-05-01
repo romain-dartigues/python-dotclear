@@ -1,4 +1,4 @@
-__serial__    = 2010, 4,30
+__serial__    = 2010, 5, 1
 __author__    = 'Romain Dartigues <romain.dartigues@gmail.com>'
 __docformat__ = 'restructuredtext'
 __all__ = (
@@ -96,10 +96,12 @@ class Translator(object):
 		'''Run the parser on `data` and return the result
 
 		Parameters:
-		- `data`: input string
+		- `data`: input *``unicode``* (or ``ascii7``) string
 		- `skip_blocks`: skip the block elements parsing to the inlines
 		  if set to ``True`` (mainly for testing purposes)
 		'''
+		if type(data) is not unicode:
+			data = unicode(data)
 		if skip_blocks:
 			return p_inline.sub(self.inlines, data)
 		return p_block.sub(self.blocks, data)
