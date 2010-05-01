@@ -149,8 +149,12 @@ class TestSimpleInlines(TestWiki2XHTML):
 		):
 			self._test(raw, html)
 
-#	def test_footnote(self):
-#		self.test('texte$$Corps de la note$$', '')
+	def test_footnote(self):
+		self._test(
+			u'texte$$Corps de la note$$',
+			u'texte<sup><a href="#wiki-footnote-1">1</a></sup>'\
+			u'<div class="footnotes">\n <ol>\n  <li id="wiki-footnote-1">Corps de la note</li>\n </ol>\n</div>\n'
+		)
 
 
 
