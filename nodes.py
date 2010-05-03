@@ -172,6 +172,7 @@ class MazNode(object):
 				break
 
 	def descend(self, node=None):
+		# FIXME: there is a bug when descending from a higher level than the root
 		'''Iter through the tree, starting at ``node`` and yield a tuple
 
 		Parameter:

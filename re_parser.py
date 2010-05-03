@@ -85,7 +85,7 @@ p_inline = sre_compile.compile(r'(?<!\\)(?:%s)' % ('|'.join(RULES_INLINE),), RUL
 
 class Translator(object):
 	'''DotClear wiki2xhtml markup parser abstract superclass implementation
-	
+
 	This is a base class for translators whose methods should implement
 	blocks and inlines tags.
 
@@ -99,6 +99,10 @@ class Translator(object):
 		- `data`: input *``unicode``* (or ``ascii7``) string
 		- `skip_blocks`: skip the block elements parsing to the inlines
 		  if set to ``True`` (mainly for testing purposes)
+
+		.. Important::
+		   Input *must* use LF; Microsoft CRLF *should* work, behaviour
+		   upon Apple CR newlines is undefined.
 		'''
 		if type(data) is not unicode:
 			data = unicode(data)
