@@ -1,0 +1,110 @@
+!!!Dotclear @@markup@@
+
+!!Listes
+
+!Liste non ordonnée
+
+* premier item
+* deuxième item
+* troisième item 
+
+!Liste ordonnée
+
+# item 1
+# item 2
+# item 3 
+
+!avec sous-listes 
+
+* premier item
+** premier sous-premier item
+** deuxième sous-premier item
+* deuxième item
+*# et on peut même mélanger
+*# ordonné et non ordonné
+* troisème item 
+
+----
+
+!!Blocs
+
+!Paragraphes
+
+Paragraphe 1.
+
+Paragraphe
+numero
+ deux.
+
+!Texte préformaté
+
+///
+Bloc de texte1
+///////préformaté
+respectant les espaces et les retours à la ligne.
+///
+
+ Bloc de texte2
+    préformaté version 2
+ respectant  les  espaces  et les retours à la ligne.
+
+!Texte HTML
+
+///html
+<p style="color:red">mon texte en rouge</p>
+///
+
+!Bloc de citation
+
+> Bloc de citation.
+>
+> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat…
+
+----
+
+!!Éléments de formatage
+
+''emphase'', __forte emphase__, ++insert++, --suppression--, ??acronyme|titre??, @@code@@
+
+Et __fort @@code ''chiant''@@__.
+
+!Retour forcé à la ligne
+
+Première ligne%%%
+Deuxième ligne
+
+!Liens
+
+[url]
+[nom|url]
+[nom|url|langue]
+[nom|url|langue|titre]
+http://www.example.net/?this=is+an%20automated#url
+
+[torture\|]
+[torture\||ur\|l]
+[torture\||url\||\|angue]
+[torture\||url\||\|angue|t\|tre]
+
+!Images
+
+((url))
+((url|texte alternatif))
+((url|texte alternatif|position))
+((url|texte alternatif|position|description longue))
+
+!Ancre
+
+~ancre~
+
+!Citation en ligne
+
+{{citation}}
+{{citation|langue}}
+{{citation|langue|url source}}
+
+!Note de bas de page
+
+texte$$Corps de la note$$
+
+EOF!

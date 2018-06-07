@@ -1,0 +1,58 @@
+:mod:`nodes` --- Binary trees
+=============================
+
+.. module:: nodes
+   :synopsis: Binary trees
+.. moduleauthor:: Romain Dartigues <romain.dartigues@gmail.com>
+.. sectionauthor:: Romain Dartigues <romain.dartigues@gmail.com>
+
+MazNode
+-------
+
+HTML::
+
+   <body>
+    <p>
+     <strong>#text 1</strong>
+     <br />
+     #text 2
+    </p>
+    <blockquote>#text 3</blockquote>
+    <div>#text 4</div>
+   </body>
+
+XML tree::
+
+   body
+   |-- p
+   |   +-- strong
+   |   |   `-- #text 1
+   |   +-- br/
+   |   `-- #text 2
+   +-- blockquote
+   |   `-- #text 3
+   `-- div
+       `-- #text 4
+
+MazNode tree::
+
+   body
+   `-- p --next--> blockquote --next--> div
+       |       `-- #text 3              `-- #text 4
+       `-- strong --next--> br/ --next--> #text 2
+           `-- #text 1
+
+Construction::
+
+   body = MazNode('body')
+   body+= MazNode('p')
+   body.child+= MazNode('strong')
+   body.child.child+= MazNode('#text 1')
+   body.child+= MazNode('br')
+   body.child+= MazNode('#text 2')
+   body.child|= MazNode('blockquote')
+   body.child.next+= MazNode('#text 3')
+   body+= MazNode('div')
+   body.child.next.next+= MazNode('#text 4')
+
+.. :: vim:ft=rst ts=3 sw=3 ai et
