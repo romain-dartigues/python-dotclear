@@ -23,8 +23,8 @@ import itertools
 import urlparse
 
 
-from nodes import MazNode, ENTER, LEAVE, EMPTY
-from re_parser import *
+from nodes import MazNode, LEAVE, EMPTY
+from re_parser import Translator, p_inline
 
 
 
