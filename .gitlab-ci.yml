@@ -1,0 +1,16 @@
+---
+
+stages:
+  - lint
+
+pyflakes:
+  image: eeacms/pyflakes:latest
+  script: ["pyflakes ."]
+  stage: lint
+
+pylint:
+  image: eeacms/pylint:latest
+  script: ["pylint ."]
+  stage: lint
+
+...
