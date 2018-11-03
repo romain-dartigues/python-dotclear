@@ -1,6 +1,3 @@
-__serial__ = 2010, 5, 1
-__author__ = 'Romain Dartigues <romain.dartigues@gmail.com>'
-__docformat__ = 'restructuredtext'
 __all__ = (
 	'Translator',
 	'p_block',

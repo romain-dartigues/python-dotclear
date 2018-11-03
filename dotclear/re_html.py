@@ -7,8 +7,6 @@ Usage::
 	<p>Hello World.</p>
 
 """
-__serial__ = 2010, 5, 1
-__author__ = 'Romain Dartigues <romain.dartigues@gmail.com>'
 __all__ = ['Wiki2XHTML']
 
 

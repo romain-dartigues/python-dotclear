@@ -8,7 +8,7 @@ sys.dont_write_bytecode = True
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 
-import re_parser
+from dotclear import re_parser
 
 
 

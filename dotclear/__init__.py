@@ -11,8 +11,7 @@ into another format (i.e.: html, restructured text, ...).
 .. _syntaxe-1.2: http://fr.dotclear.org/documentation/1.2/usage/syntaxes
 .. _syntaxe-2.0: http://fr.dotclear.org/documentation/2.0/usage/syntaxes
 '''
-__author__ = 'Romain Dartigues <romain.dartigues@gmail.com>'
-__docformat__ = 'restructuredtext'
+__version__ = '0.1'
 __all__ = ['wiki2xhtml']
 
 
