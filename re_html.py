@@ -7,12 +7,9 @@ Usage::
 	<p>Hello World.</p>
 
 """
-__serial__    = 2010, 5, 1
-__author__    = 'Romain Dartigues <romain.dartigues@gmail.com>'
-__docformat__ = 'restructuredtext'
-__all__ = (
-	'Wiki2XHTML',
-)
+__serial__ = 2010, 5, 1
+__author__ = 'Romain Dartigues <romain.dartigues@gmail.com>'
+__all__ = ['Wiki2XHTML']
 
 
 
@@ -71,7 +68,8 @@ class Wiki2XHTML(Translator):
 	#? non-word
 	_non_word = sre_compile.compile(r'\W+')
 
-	def escape(self, string, entities=False):
+	@staticmethod
+	def escape(string, entities=False):
 		'''Escape special HTML characters
 
 		Replace characters with a special signifiance in HTML by their
@@ -83,7 +81,8 @@ class Wiki2XHTML(Translator):
 		return u''.join(c in tr and tr[c] or c for c in string)
 
 	##### blocks
-	def b_hr(self, match):
+	@staticmethod
+	def b_hr(match):
 		return u'<hr />\n'
 
 	def b_p(self, match):
@@ -143,7 +142,8 @@ class Wiki2XHTML(Translator):
 		root.child.parent = root.child
 		return self._li_trim.sub('', node2html(root.child))
 
-	def b_nl(self, match):
+	@staticmethod
+	def b_nl(match):
 		return ''
 
 	##### inlines
@@ -162,7 +162,8 @@ class Wiki2XHTML(Translator):
 	def i_ins(self, match):
 		return u'<ins>%s</ins>' % p_inline.sub(self.inlines, match.group(match.lastgroup))
 
-	def i_br(self, match):
+	@staticmethod
+	def i_br(match):
 		return u'<br />'
 
 	def i_anchor(self, match):

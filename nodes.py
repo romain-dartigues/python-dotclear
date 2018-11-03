@@ -3,9 +3,7 @@ import copy
 
 
 
-__all__ = (
-	'MazNode',
-)
+__all__ = ['MazNode']
 
 
 INPLACE  = 0
@@ -35,13 +33,15 @@ class MazNode(object):
 	__slots__ = ('name', 'parent', 'child', 'prev', 'next', 'attr')
 	__serial__ = 2010, 4,21
 
-	def __init__(self, name='', attributes={}, **attr):
-		self.name   = name
+	def __init__(self, name='', attributes=None, **attr):
+		if attributes is None:
+			attributes = {}
+		self.name = name
 		self.parent = attr.pop('parent', self)
-		self.child  = attr.pop('child', None) # first child
-		self.next   = attr.pop('next', self) # next child
-		self.prev   = attr.pop('prev', self) # prev child
-		self.attr   = attributes.copy()
+		self.child = attr.pop('child', None) # first child
+		self.next = attr.pop('next', self) # next child
+		self.prev = attr.pop('prev', self) # prev child
+		self.attr = attributes.copy()
 		self.attr.update(attr)
 		assert isinstance(self.parent, MazNode)
 		assert isinstance(self.child,  (None.__class__, MazNode))
@@ -128,7 +128,7 @@ class MazNode(object):
 		elif l < 2:
 			r+= ['>', unicode(self.child), '</%s>' % self.name]
 		else:
-			r+= ['>', '<!-- %u child%s --->' %(l, l>1 and 's' or ''), '</%s>' % self.name]
+			r+= ['>', '<!-- %u child%s --->' % (l, l>1 and 's' or ''), '</%s>' % self.name]
 		return unicode(''.join(r))
 
 	def __repr__(self):
@@ -137,7 +137,7 @@ class MazNode(object):
 	def __len__(self):
 		'''Return the number of childs'''
 		c = 0
-		for child in self:
+		for _ in self:
 			c+= 1
 		return c
 

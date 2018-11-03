@@ -1,5 +1,5 @@
-__serial__    = 2010, 5, 1
-__author__    = 'Romain Dartigues <romain.dartigues@gmail.com>'
+__serial__ = 2010, 5, 1
+__author__ = 'Romain Dartigues <romain.dartigues@gmail.com>'
 __docformat__ = 'restructuredtext'
 __all__ = (
 	'Translator',
@@ -104,7 +104,7 @@ class Translator(object):
 		   Input *must* use LF; Microsoft CRLF *should* work, behaviour
 		   upon Apple CR newlines is undefined.
 		'''
-		if type(data) is not unicode:
+		if not isinstance(data, unicode):
 			data = unicode(data)
 		if skip_blocks:
 			return p_inline.sub(self.inlines, data)
@@ -142,7 +142,8 @@ class Translator(object):
 		self.warn(match, 'missing inline handler: %s.%s()' % (self.__class__.__name__, target))
 		return match.group()
 
-	def warn(self, match, message):
+	@staticmethod
+	def warn(match, message):
 		if __debug__:
 			sys.stderr.write(
 				'warning: [%s](%d, %d): %s\n' % (
